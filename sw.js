@@ -1,5 +1,5 @@
-const CACHE_NAME = 'inaction-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME = 'inaction-v2';
+const ASSETS = ['/inaction/', '/inaction/index.html', '/inaction/manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
