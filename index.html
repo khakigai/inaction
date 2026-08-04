@@ -138,24 +138,45 @@
       margin-bottom: 16px;
     }
 
-    .option-group {
-      display: flex; gap: 10px;
-      flex-wrap: wrap; justify-content: center;
+    .slider-wrapper {
+      width: 100%; max-width: 280px;
+      margin: 0 auto;
     }
-    .option-btn {
-      padding: 10px 20px;
-      border-radius: 24px;
-      border: 1.5px solid #D0CBC2;
-      background: transparent; color: #757575;
-      font-size: 14px; font-weight: 500;
-      font-family: 'Inter', sans-serif;
+
+    #duration-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 3px;
+      background: #D0CBC2;
+      border-radius: 2px;
+      outline: none;
+    }
+    #duration-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #1A1A1A;
       cursor: pointer;
-      transition: all 0.2s ease;
+      border: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
     }
-    .option-btn:active { transform: scale(0.95); }
-    .option-btn.selected {
-      border-color: #1A1A1A; background: #1A1A1A;
-      color: #F5F1E8;
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 0 2px;
+    }
+    .slider-ticks span {
+      font-size: 11px;
+      color: #B0A99E;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+    }
+    .slider-ticks span.active {
+      color: #1A1A1A;
+      font-weight: 600;
     }
 
     .sound-toggle {
@@ -571,13 +592,12 @@
     <button class="back-link" onclick="showScreen('home')">← Back</button>
 
     <div class="setup-section">
-      <div class="setup-label">duration</div>
-      <div class="option-group" id="setup-duration">
-        <button class="option-btn" data-time="300">5m</button>
-        <button class="option-btn selected" data-time="600">10m</button>
-        <button class="option-btn" data-time="900">15m</button>
-        <button class="option-btn" data-time="1200">20m</button>
-        <button class="option-btn" data-time="1800">30m</button>
+      <div class="setup-label"><span id="duration-display">10m</span></div>
+      <div class="slider-wrapper">
+        <input type="range" id="duration-slider" min="0" max="4" step="1" value="1">
+        <div class="slider-ticks">
+          <span>5m</span><span>10m</span><span>15m</span><span>20m</span><span>30m</span>
+        </div>
       </div>
     </div>
 
@@ -953,11 +973,18 @@
     }
 
     // ── Settings UI ──
+    const DURATION_STEPS = [300, 600, 900, 1200, 1800];
+    const DURATION_LABELS = ['5m', '10m', '15m', '20m', '30m'];
+
     function renderSettings() {
       const s = getSettings();
-      // Duration pills (setup screen)
-      document.querySelectorAll('#setup-duration .option-btn').forEach(p => {
-        p.classList.toggle('selected', parseInt(p.dataset.time) === s.duration);
+      // Duration slider (setup screen)
+      const idx = DURATION_STEPS.indexOf(s.duration);
+      const slider = document.getElementById('duration-slider');
+      slider.value = idx >= 0 ? idx : 1;
+      document.getElementById('duration-display').textContent = DURATION_LABELS[slider.value];
+      document.querySelectorAll('.slider-ticks span').forEach((tick, i) => {
+        tick.classList.toggle('active', i === parseInt(slider.value));
       });
       // Sound toggle (setup screen)
       const soundToggle = document.getElementById('sound-toggle');
@@ -967,11 +994,9 @@
       document.getElementById('toggle-reminder').classList.toggle('on', s.reminder);
     }
 
-    document.getElementById('setup-duration').addEventListener('click', e => {
-      const btn = e.target.closest('.option-btn');
-      if (!btn) return;
+    document.getElementById('duration-slider').addEventListener('input', e => {
       const s = getSettings();
-      s.duration = parseInt(btn.dataset.time);
+      s.duration = DURATION_STEPS[e.target.value];
       saveSettings(s);
       renderSettings();
     });
