@@ -592,7 +592,6 @@
     <button class="back-link" onclick="showScreen('home')">← Back</button>
 
     <div class="setup-section">
-      <div class="setup-label"><span id="duration-display">10m</span></div>
       <div class="slider-wrapper">
         <input type="range" id="duration-slider" min="0" max="4" step="1" value="1">
         <div class="slider-ticks">
@@ -982,7 +981,6 @@
       const idx = DURATION_STEPS.indexOf(s.duration);
       const slider = document.getElementById('duration-slider');
       slider.value = idx >= 0 ? idx : 1;
-      document.getElementById('duration-display').textContent = DURATION_LABELS[slider.value];
       document.querySelectorAll('.slider-ticks span').forEach((tick, i) => {
         tick.classList.toggle('active', i === parseInt(slider.value));
       });
