@@ -1057,21 +1057,29 @@
 
       const today = new Date(); today.setHours(0,0,0,0);
       const todayKey = toDateKey(today);
-      const dayOfWeek = today.getDay();
-      const cardInner = wrapper.clientWidth || 328;
-      const totalWeeks = Math.floor(cardInner / 12);
+      // Monday-based: Mon=0, Tue=1, ..., Sun=6
+      const monDow = d => (d.getDay() + 6) % 7;
 
+      // Start from earliest session week, or current week if none
+      const sessionKeys = Object.keys(data.sessions).sort();
       const startDate = new Date(today);
-      startDate.setDate(today.getDate() - (totalWeeks * 7) - dayOfWeek);
+      if (sessionKeys.length > 0) {
+        startDate.setTime(new Date(sessionKeys[0] + 'T00:00:00').getTime());
+      }
+      startDate.setDate(startDate.getDate() - monDow(startDate)); // align to Monday
+
+      // End at Sunday of current week
       const endDate = new Date(today);
-      endDate.setDate(today.getDate() + (6 - dayOfWeek));
+      endDate.setDate(today.getDate() + (6 - monDow(today)));
 
       const current = new Date(startDate);
       while (current <= endDate) {
         const key = toDateKey(current);
         const cell = document.createElement('div');
         cell.className = 'heatmap-cell';
-        if (current <= today) {
+        if (current > today) {
+          cell.classList.add('future');
+        } else {
           const sec = data.sessions[key];
           if (sec != null) cell.classList.add(durationToLevel(sec));
         }
