@@ -131,13 +131,6 @@
     #setup { gap: 48px; }
 
     .setup-section { text-align: center; }
-    .setup-label {
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 400;
-      color: #B0A99E;
-      margin-bottom: 16px;
-    }
-
     .slider-wrapper {
       width: 100%; max-width: 280px;
       margin: 0 auto;
@@ -274,29 +267,6 @@
 
     .settings-row-label {
       font-size: 14px; color: #1A1A1A;
-    }
-
-    .settings-row-duration {
-      padding: 14px 16px;
-      border-bottom: 1px solid #F0ECE4;
-    }
-    .settings-row-duration:last-child { border-bottom: none; }
-    .duration-pills {
-      display: flex; gap: 8px; margin-top: 8px;
-    }
-    .pill {
-      padding: 6px 14px;
-      border-radius: 16px;
-      border: 1.5px solid #D0CBC2;
-      background: transparent; color: #757575;
-      font-size: 13px; font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .pill:active { transform: scale(0.95); }
-    .pill.selected {
-      border-color: #1A1A1A; color: #1A1A1A; font-weight: 600;
     }
 
     .mini-toggle {
@@ -994,8 +964,48 @@
     function toggleSetting(key) {
       const s = getSettings();
       s[key] = !s[key];
+      if (key === 'reminder' && s.reminder) {
+        Notification.requestPermission().then(p => {
+          if (p !== 'granted') {
+            s.reminder = false;
+            saveSettings(s);
+            renderSettings();
+          } else {
+            scheduleReminder();
+          }
+        });
+      }
       saveSettings(s);
       renderSettings();
+      if (key === 'reminder' && !s.reminder) clearTimeout(reminderTimeout);
+    }
+
+    // ── Daily Reminder ──
+    let reminderTimeout = null;
+
+    function scheduleReminder() {
+      clearTimeout(reminderTimeout);
+      if (!getSettings().reminder || hasSessionToday()) return;
+      if (Notification.permission !== 'granted') return;
+
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(20, 0, 0, 0);
+
+      if (now >= target) {
+        showReminder();
+      } else {
+        reminderTimeout = setTimeout(showReminder, target - now);
+      }
+    }
+
+    function showReminder() {
+      if (hasSessionToday() || !getSettings().reminder) return;
+      if (Notification.permission !== 'granted') return;
+      new Notification('Inaction', {
+        body: "You haven't planted grass today 🌱",
+        icon: 'icon-192.png',
+      });
     }
 
     // ── Data: Export / Import / Reset ──
@@ -1244,11 +1254,14 @@
 
     // ── Visibility Change ──
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && state.timerInterval) {
-        const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
-        state.remaining = Math.max(0, getSettings().duration - elapsed);
-        updateTimerDisplay();
-        if (state.remaining <= 0) completeSession();
+      if (!document.hidden) {
+        scheduleReminder();
+        if (state.timerInterval) {
+          const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+          state.remaining = Math.max(0, getSettings().duration - elapsed);
+          updateTimerDisplay();
+          if (state.remaining <= 0) completeSession();
+        }
       }
     });
 
@@ -1258,6 +1271,7 @@
     window.toggleSound = toggleSound;
     window.shareBadge = shareBadge;
     renderHeatmap();
+    scheduleReminder();
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
   </script>
 </body>
