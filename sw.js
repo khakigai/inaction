@@ -1,4 +1,4 @@
-const CACHE_NAME = 'inaction-v7';
+const CACHE_NAME = 'inaction-v8';
 const ASSETS = ['/inaction/', '/inaction/index.html', '/inaction/manifest.json'];
 
 self.addEventListener('install', e => {
