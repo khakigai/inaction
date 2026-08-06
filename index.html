@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Inaction">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>Inaction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #F5F1E8;
+      color: #1A1A1A;
+      min-height: 100dvh;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ── Screens ── */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px;
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s;
+      z-index: 1;
+      background: #F5F1E8;
+    }
+    .screen.active { opacity: 1; visibility: visible; z-index: 2; }
+
+    /* ── Home ── */
+    #home { gap: 32px; }
+
+    .app-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 48px; font-weight: 900;
+      letter-spacing: 1px;
+      color: #1A1A1A;
+    }
+
+    .settings-icon {
+      position: absolute;
+      top: max(20px, env(safe-area-inset-top, 0px) + 8px);
+      right: 24px;
+      background: none; border: none;
+      cursor: pointer; padding: 8px;
+      color: #B0A99E;
+    }
+    .settings-icon svg {
+      width: 22px; height: 22px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ── Heatmap ── */
+    .heatmap-card {
+      width: 100%; max-width: 360px;
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .heatmap-wrapper {
+      width: 100%;
+      overflow-x: auto; overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .heatmap-wrapper::-webkit-scrollbar { display: none; }
+
+    .heatmap {
+      display: grid;
+      grid-template-rows: repeat(7, 1fr);
+      grid-auto-flow: column;
+      gap: 3px;
+      width: max-content;
+    }
+    .heatmap-cell {
+      width: 9px; height: 9px;
+      border-radius: 2px;
+      background: #EAE6DE;
+      transition: background 0.3s;
+    }
+    .heatmap-cell.future { background: #EAE6DE; }
+    .heatmap-cell.level-1 { background: #c6e6a3; }
+    .heatmap-cell.level-2 { background: #85d068; }
+    .heatmap-cell.level-3 { background: #4aad3a; }
+    .heatmap-cell.level-4 { background: #2d8a30; }
+    .heatmap-cell.level-5 { background: #1a6b22; }
+    .heatmap-cell.today { outline: 1.5px solid #E85D04; outline-offset: -1px; }
+
+    .start-btn {
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      border: 1.5px solid #B0A99E;
+      background: transparent; color: #B0A99E;
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: pulse 3s ease-in-out infinite;
+      position: absolute;
+      bottom: max(120px, env(safe-area-inset-bottom, 0px) + 100px);
+    }
+    .start-btn:active { transform: scale(0.92); background: #B0A99E10; }
+    .start-btn.done {
+      border-color: #D0CBC2; color: #D0CBC2;
+      animation: none; cursor: default;
+    }
+    .start-btn.done:active { transform: none; background: transparent; }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 #B0A99E20; }
+      50% { box-shadow: 0 0 0 16px #B0A99E00; }
+    }
+
+    /* ── Setup ── */
+    #setup { gap: 48px; }
+
+    .setup-section { text-align: center; }
+    .slider-wrapper {
+      width: 100%; max-width: 280px;
+      margin: 0 auto;
+    }
+
+    #duration-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 3px;
+      background: #D0CBC2;
+      border-radius: 2px;
+      outline: none;
+    }
+    #duration-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #1A1A1A;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 0 2px;
+    }
+    .slider-ticks span {
+      font-size: 11px;
+      color: #B0A99E;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+    }
+    .slider-ticks span.active {
+      color: #1A1A1A;
+      font-weight: 600;
+    }
+
+    .sound-toggle {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .sound-toggle-knob {
+      width: 40px; height: 22px;
+      border-radius: 11px;
+      background: #D0CBC2;
+      position: relative;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+    }
+    .sound-toggle-knob::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      top: 3px; left: 3px;
+      transition: all 0.3s ease;
+    }
+    .sound-toggle.on .sound-toggle-knob { background: #B0A99E; }
+    .sound-toggle.on .sound-toggle-knob::after { transform: translateX(18px); }
+
+    .sound-toggle-label {
+      font-size: 13px; color: #757575;
+      letter-spacing: 0.5px;
+      transition: color 0.3s;
+    }
+    .sound-toggle.on .sound-toggle-label { color: #4A4A4A; }
+
+    .back-link {
+      font-size: 13px; color: #757575;
+      background: none; border: none;
+      cursor: pointer; margin-top: -24px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── Settings ── */
+    #settings {
+      justify-content: flex-start;
+      padding-top: max(60px, env(safe-area-inset-top, 0px) + 40px);
+      overflow-y: auto;
+    }
+
+    .settings-header {
+      width: 100%; max-width: 360px;
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+    }
+    .settings-back {
+      background: none; border: none;
+      font-size: 14px; color: #B0A99E;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .settings-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 900;
+      color: #1A1A1A;
+    }
+
+    .settings-section {
+      width: 100%; max-width: 360px;
+      margin-bottom: 28px;
+    }
+    .settings-section-label {
+      font-size: 11px; font-weight: 500;
+      color: #B0A99E;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .settings-card {
+      background: #FFFFFF;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #F0ECE4;
+    }
+    .settings-row:last-child { border-bottom: none; }
+
+    .settings-row-label {
+      font-size: 14px; color: #1A1A1A;
+    }
+
+    .mini-toggle {
+      width: 40px; height: 22px;
+      border-radius: 11px;
+      background: #D0CBC2;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+      border: none; padding: 0;
+      flex-shrink: 0;
+    }
+    .mini-toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      top: 3px; left: 3px;
+      transition: all 0.3s;
+    }
+    .mini-toggle.on { background: #B0A99E; }
+    .mini-toggle.on::after { transform: translateX(18px); }
+
+    .settings-action {
+      display: block;
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 14px; color: #757575;
+      font-family: 'Inter', sans-serif;
+      background: none; border: none;
+      border-bottom: 1px solid #F0ECE4;
+      cursor: pointer; text-align: left;
+      transition: background 0.15s;
+    }
+    .settings-action:last-child { border-bottom: none; }
+    .settings-action:active { background: #F9F7F2; }
+    .settings-action.danger { color: #C84747; }
+
+    /* ── Session (dark) ── */
+    #session { gap: 48px; background: #0d1117; }
+
+    .breath-container { position: relative; }
+
+    .breath-circle {
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 1.5px solid #39d35340;
+      background: radial-gradient(circle, #39d35310 0%, transparent 70%);
+      display: flex; align-items: center; justify-content: center;
+      animation: breathe 8s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(0.82);
+        border-color: #39d35325;
+        box-shadow: 0 0 30px #39d35308;
+      }
+      50% {
+        transform: scale(1.18);
+        border-color: #39d35360;
+        box-shadow: 0 0 60px #39d35318;
+      }
+    }
+
+    .timer-display {
+      font-family: 'Inter', sans-serif;
+      font-size: 40px; font-weight: 300;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 4px;
+      color: #484f58;
+    }
+
+    .quit-btn {
+      font-size: 13px; color: #484f58;
+      background: none; border: none;
+      cursor: pointer; letter-spacing: 1px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── Complete ── */
+    #complete { gap: 16px; }
+
+    .complete-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px; font-weight: 900;
+      color: #1A1A1A;
+      letter-spacing: 1px;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+    .complete-detail {
+      font-size: 14px; color: #757575;
+      animation: fadeUp 0.6s ease 0.35s both;
+    }
+
+    @keyframes fadeUp {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .heatmap-legend {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      animation: fadeUp 0.6s ease 0.55s both;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; color: #B0A99E;
+      transition: opacity 0.3s;
+    }
+    .legend-cell {
+      display: inline-block;
+      width: 9px; height: 9px;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .legend-cell.level-1 { background: #c6e6a3; }
+    .legend-cell.level-2 { background: #85d068; }
+    .legend-cell.level-3 { background: #4aad3a; }
+    .legend-cell.level-4 { background: #2d8a30; }
+    .legend-cell.level-5 { background: #1a6b22; }
+
+    .legend-item.dim { opacity: 0.25; }
+    .legend-item.active .legend-cell { width: 14px; height: 14px; border-radius: 3px; }
+    .legend-item.active { font-weight: 600; color: #4A4A4A; }
+
+    .done-link {
+      font-size: 14px; font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      color: #B0A99E;
+      background: none; border: none;
+      cursor: pointer;
+      animation: fadeUp 0.6s ease 0.7s both;
+    }
+
+    /* ── Badges Icon (Home) ── */
+    .badges-icon {
+      position: absolute;
+      top: max(20px, env(safe-area-inset-top, 0px) + 8px);
+      left: 24px;
+      background: none; border: none;
+      cursor: pointer; padding: 8px;
+      color: #B0A99E;
+    }
+    .badges-icon svg {
+      width: 22px; height: 22px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .badge-dot {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #E85D04;
+    }
+
+    /* ── Badges Screen ── */
+    #badges {
+      justify-content: flex-start;
+      padding-top: max(60px, env(safe-area-inset-top, 0px) + 40px);
+      overflow-y: auto;
+    }
+    .badges-grid {
+      width: 100%; max-width: 360px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-bottom: 40px;
+    }
+    .badges-category-label {
+      grid-column: 1 / -1;
+      font-size: 11px; font-weight: 500;
+      color: #B0A99E;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+    .badges-category-label:first-child { margin-top: 0; }
+
+    .badge-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+    }
+    .badge-card.locked { opacity: 0.35; }
+    .badge-card.locked .badge-card-icon { filter: grayscale(1); }
+    .badge-card-icon {
+      font-size: 36px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .badge-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 4px;
+    }
+    .badge-card-desc {
+      font-size: 11px;
+      color: #B0A99E;
+      line-height: 1.4;
+    }
+
+    /* ── Badge Notification (Complete screen) ── */
+    .badge-notification {
+      position: fixed;
+      bottom: max(100px, env(safe-area-inset-bottom) + 80px);
+      left: 24px; right: 24px;
+      z-index: 10;
+      animation: badgeSlideUp 0.5s ease both;
+    }
+    .badge-notification-inner {
+      max-width: 360px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .badge-notification-icon { font-size: 32px; }
+    .badge-notification-text { flex: 1; }
+    .badge-notification-label {
+      font-size: 11px;
+      color: #B0A99E;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+    .badge-notification-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 2px;
+    }
+    .badge-share-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #D0CBC2;
+      background: transparent;
+      color: #757575;
+      font-size: 13px; font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .badge-share-btn:active { transform: scale(0.95); background: #F9F7F2; }
+
+    @keyframes badgeSlideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ── Util ── */
+    @media (max-width: 380px) {
+      .app-title { font-size: 36px; }
+      .breath-circle { width: 160px; height: 160px; }
+      .timer-display { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Home ── -->
+  <div id="home" class="screen active">
+    <button class="badges-icon" onclick="showScreen('badges')">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span class="badge-dot" id="badge-dot" style="display:none"></span>
+    </button>
+    <button class="settings-icon" onclick="showScreen('settings')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <h1 class="app-title">Inaction</h1>
+    <div class="heatmap-card">
+      <div class="heatmap-wrapper" id="heatmap-wrapper">
+        <div class="heatmap" id="heatmap"></div>
+      </div>
+    </div>
+    <button class="start-btn" onclick="showScreen('setup')">Start</button>
+  </div>
+
+  <!-- ── Setup ── -->
+  <div id="setup" class="screen">
+    <button class="back-link" onclick="showScreen('home')">← Back</button>
+
+    <div class="setup-section">
+      <div class="slider-wrapper">
+        <input type="range" id="duration-slider" min="0" max="4" step="1" value="1">
+        <div class="slider-ticks">
+          <span>5m</span><span>10m</span><span>15m</span><span>20m</span><span>30m</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <button class="sound-toggle on" id="sound-toggle" onclick="toggleSound()">
+        <span class="sound-toggle-knob"></span>
+        <span class="sound-toggle-label">Alpha waves</span>
+      </button>
+    </div>
+
+    <button class="start-btn" onclick="startSession()">Start</button>
+  </div>
+
+  <!-- ── Settings ── -->
+  <div id="settings" class="screen">
+    <div class="settings-header">
+      <button class="settings-back" onclick="showScreen('home')">← Back</button>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-label">Feedback</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <span class="settings-row-label">Haptic</span>
+          <button class="mini-toggle on" id="toggle-haptic" onclick="toggleSetting('haptic')"></button>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">Daily reminder</span>
+          <button class="mini-toggle" id="toggle-reminder" onclick="toggleSetting('reminder')"></button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-label">Data</div>
+      <div class="settings-card">
+        <button class="settings-action" onclick="exportData()">Export</button>
+        <button class="settings-action" onclick="importData()">Import</button>
+        <button class="settings-action danger" onclick="resetData()">Reset all data</button>
+      </div>
+    </div>
+    <input type="file" id="import-input" accept=".json" style="display:none">
+  </div>
+
+  <!-- ── Badges ── -->
+  <div id="badges" class="screen">
+    <div class="settings-header">
+      <button class="settings-back" onclick="showScreen('home')">← Back</button>
+    </div>
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+
+  <!-- ── Session ── -->
+  <div id="session" class="screen">
+    <div class="breath-container">
+      <div class="breath-circle"></div>
+    </div>
+    <div class="timer-display" id="timer">10:00</div>
+    <button class="quit-btn" onclick="quitSession()">Quit</button>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div id="complete" class="screen">
+    <div class="complete-title">Grass planted 🌱</div>
+    <div class="complete-detail" id="complete-detail"></div>
+    <div class="heatmap-legend" id="complete-legend">
+      <span class="legend-item" data-level="1"><span class="legend-cell level-1"></span>5m</span>
+      <span class="legend-item" data-level="2"><span class="legend-cell level-2"></span>10m</span>
+      <span class="legend-item" data-level="3"><span class="legend-cell level-3"></span>15m</span>
+      <span class="legend-item" data-level="4"><span class="legend-cell level-4"></span>20m</span>
+      <span class="legend-item" data-level="5"><span class="legend-cell level-5"></span>30m</span>
+    </div>
+    <button class="done-link" onclick="showScreen('home')">Done</button>
+  </div>
+
+  <script>
+    // ── Data Layer ──
+    const STORAGE_KEY = 'inaction-data';
+    const SETTINGS_KEY = 'inaction-settings';
+    const BADGES_KEY = 'inaction-badges';
+
+    const defaults = { duration: 600, sound: true, haptic: true, reminder: false };
+
+    function getData() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { sessions: {} }; }
+      catch { return { sessions: {} }; }
+    }
+
+    function getSettings() {
+      try { return { ...defaults, ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) }; }
+      catch { return { ...defaults }; }
+    }
+
+    function saveSettings(s) {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    }
+
+    function saveSession(durationSec) {
+      const data = getData();
+      data.sessions[toDateKey(new Date())] = durationSec;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function hasSessionToday() {
+      return getData().sessions[toDateKey(new Date())] != null;
+    }
+
+    function toDateKey(d) {
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    // ── Badge Data ──
+    function getBadgeData() {
+      try { return JSON.parse(localStorage.getItem(BADGES_KEY)) || { unlocked: {}, lastSeenCount: 0 }; }
+      catch { return { unlocked: {}, lastSeenCount: 0 }; }
+    }
+    function saveBadgeData(bd) {
+      localStorage.setItem(BADGES_KEY, JSON.stringify(bd));
+    }
+
+    // ── Badge Helpers ──
+    function getMaxStreak(sessions) {
+      const dates = Object.keys(sessions).sort();
+      if (dates.length === 0) return 0;
+      let maxStreak = 1, cur = 1;
+      for (let i = 1; i < dates.length; i++) {
+        const diff = Math.round((new Date(dates[i]) - new Date(dates[i - 1])) / 86400000);
+        if (diff === 1) { cur++; maxStreak = Math.max(maxStreak, cur); }
+        else { cur = 1; }
+      }
+      return maxStreak;
+    }
+    function getTotalSeconds(sessions) {
+      return Object.values(sessions).reduce((s, v) => s + v, 0);
+    }
+
+    // ── Badge Definitions ──
+    const BADGES = [
+      // ── Streak (consecutive days) ──
+      { id: 'streak-1',     name: 'Pebble',        description: '1-day streak',     icon: '🪨', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 1 },
+      { id: 'streak-10',    name: 'Stone',          description: '10-day streak',    icon: '🪵', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 10 },
+      { id: 'streak-50',    name: 'Boulder',        description: '50-day streak',    icon: '⛰️', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 50 },
+      { id: 'streak-100',   name: 'Bedrock',        description: '100-day streak',   icon: '🧱', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 100 },
+      { id: 'streak-300',   name: 'Mountain',       description: '300-day streak',   icon: '🏔️', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 300 },
+      { id: 'streak-500',   name: 'Tectonic',       description: '500-day streak',   icon: '🌋', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 500 },
+      { id: 'streak-1000',  name: 'Diamond',        description: '1000-day streak',  icon: '💎', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 1000 },
+      { id: 'streak-10000', name: 'Planet Core',    description: '10000-day streak', icon: '🌍', category: 'streak',
+        check: (s) => getMaxStreak(s) >= 10000 },
+
+      // ── Time (total hours) ──
+      { id: 'time-1',    name: 'One Hour Lost',       description: '1 hour of nothing',    icon: '⏳', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 3600 },
+      { id: 'time-10',   name: 'Time Well Wasted',    description: '10 hours of nothing',  icon: '🕰️', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 36000 },
+      { id: 'time-50',   name: 'Slow Living',         description: '50 hours of nothing',  icon: '🌅', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 180000 },
+      { id: 'time-100',  name: 'Deep Rest',           description: '100 hours of nothing', icon: '🌊', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 360000 },
+      { id: 'time-300',  name: 'Still Water',         description: '300 hours of nothing', icon: '🏖️', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 1080000 },
+      { id: 'time-500',  name: 'Empty Mind',          description: '500 hours of nothing', icon: '🪷', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 1800000 },
+      { id: 'time-1000',  name: 'Beyond Time',         description: '1000 hours of nothing', icon: '♾️', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 3600000 },
+      { id: 'time-10000', name: 'Void',               description: '10000 hours of nothing',icon: '🕳️', category: 'time',
+        check: (s) => getTotalSeconds(s) >= 36000000 },
+
+      // ── Session (total count) ──
+      { id: 'session-1',    name: 'First Grass',       description: '1 session',    icon: '🌱', category: 'session',
+        check: (s) => Object.keys(s).length >= 1 },
+      { id: 'session-10',   name: 'Sprout',            description: '10 sessions',  icon: '🌿', category: 'session',
+        check: (s) => Object.keys(s).length >= 10 },
+      { id: 'session-50',   name: 'Young Tree',        description: '50 sessions',  icon: '🌳', category: 'session',
+        check: (s) => Object.keys(s).length >= 50 },
+      { id: 'session-100',  name: 'Meadow',            description: '100 sessions', icon: '🏕️', category: 'session',
+        check: (s) => Object.keys(s).length >= 100 },
+      { id: 'session-300',  name: 'Forest',            description: '300 sessions', icon: '🌲', category: 'session',
+        check: (s) => Object.keys(s).length >= 300 },
+      { id: 'session-500',  name: 'Timberland',        description: '500 sessions', icon: '🌾', category: 'session',
+        check: (s) => Object.keys(s).length >= 500 },
+      { id: 'session-1000',  name: 'Eternal Garden',   description: '1000 sessions', icon: '🌴', category: 'session',
+        check: (s) => Object.keys(s).length >= 1000 },
+      { id: 'session-10000', name: 'Planet Nothing',   description: '10000 sessions',icon: '🪐', category: 'session',
+        check: (s) => Object.keys(s).length >= 10000 },
+    ];
+
+    // ── Badge Evaluation ──
+    function evaluateNewBadges() {
+      const data = getData();
+      const bd = getBadgeData();
+      const now = new Date();
+      const newlyUnlocked = [];
+      BADGES.forEach(badge => {
+        if (bd.unlocked[badge.id]) return;
+        if (badge.check(data.sessions)) {
+          bd.unlocked[badge.id] = { unlockedAt: now.toISOString() };
+          newlyUnlocked.push(badge);
+        }
+      });
+      if (newlyUnlocked.length > 0) saveBadgeData(bd);
+      return newlyUnlocked;
+    }
+
+    // ── Badge Notification ──
+    function showBadgeNotification(newBadges) {
+      const badge = newBadges[0];
+      const existing = document.getElementById('badge-notification');
+      if (existing) existing.remove();
+      const el = document.createElement('div');
+      el.className = 'badge-notification';
+      el.id = 'badge-notification';
+      el.innerHTML = `
+        <div class="badge-notification-inner">
+          <span class="badge-notification-icon">${badge.icon}</span>
+          <div class="badge-notification-text">
+            <div class="badge-notification-label">Badge earned</div>
+            <div class="badge-notification-name">${badge.name}</div>
+          </div>
+          <button class="badge-share-btn" onclick="shareBadge('${badge.id}')">Share</button>
+        </div>
+      `;
+      document.getElementById('complete').appendChild(el);
+    }
+
+    // ── Badge Collection ──
+    function renderBadges() {
+      const bd = getBadgeData();
+      const grid = document.getElementById('badges-grid');
+      grid.innerHTML = '';
+      const categories = [
+        { key: 'session', label: 'Session' },
+        { key: 'streak',  label: 'Streak' },
+        { key: 'time',    label: 'Time' },
+      ];
+      categories.forEach(cat => {
+        const label = document.createElement('div');
+        label.className = 'badges-category-label';
+        label.textContent = cat.label;
+        grid.appendChild(label);
+
+        BADGES.filter(b => b.category === cat.key).forEach(badge => {
+          const unlocked = !!bd.unlocked[badge.id];
+          const card = document.createElement('div');
+          card.className = `badge-card ${unlocked ? 'unlocked' : 'locked'}`;
+          card.innerHTML = `
+            <span class="badge-card-icon">${badge.icon}</span>
+            <div class="badge-card-name">${badge.name}</div>
+            <div class="badge-card-desc">${badge.description}</div>
+          `;
+          if (unlocked) card.addEventListener('click', () => shareBadge(badge.id));
+          grid.appendChild(card);
+        });
+      });
+      bd.lastSeenCount = Object.keys(bd.unlocked).length;
+      saveBadgeData(bd);
+    }
+
+    function updateBadgeDot() {
+      const bd = getBadgeData();
+      const dot = document.getElementById('badge-dot');
+      dot.style.display = Object.keys(bd.unlocked).length > bd.lastSeenCount ? 'block' : 'none';
+    }
+
+    // ── Share Card (Canvas API) ──
+    async function shareBadge(badgeId) {
+      const badge = BADGES.find(b => b.id === badgeId);
+      if (!badge) return;
+      const data = getData();
+      const totalSessions = Object.keys(data.sessions).length;
+      const totalMin = Math.floor(getTotalSeconds(data.sessions) / 60);
+
+      await document.fonts.ready;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080; canvas.height = 1920;
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = '#F5F1E8';
+      ctx.fillRect(0, 0, 1080, 1920);
+
+      // Badge emoji
+      ctx.font = '120px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(badge.icon, 540, 720);
+
+      // Badge name
+      ctx.font = '900 64px "Playfair Display", Georgia, serif';
+      ctx.fillStyle = '#1A1A1A';
+      ctx.fillText(badge.name, 540, 860);
+
+      // Description
+      ctx.font = '300 32px "Inter", sans-serif';
+      ctx.fillStyle = '#757575';
+      ctx.fillText(badge.description, 540, 930);
+
+      // Divider
+      ctx.strokeStyle = '#D0CBC2';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(420, 1020); ctx.lineTo(660, 1020);
+      ctx.stroke();
+
+      // Stats
+      ctx.font = '400 28px "Inter", sans-serif';
+      ctx.fillStyle = '#B0A99E';
+      ctx.fillText(`${totalSessions} sessions · ${totalMin} minutes of nothing`, 540, 1080);
+
+      // App name
+      ctx.font = '500 24px "Inter", sans-serif';
+      ctx.fillStyle = '#B0A99E';
+      ctx.fillText('I N A C T I O N', 540, 1720);
+
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], `inaction-${badge.id}.png`, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], title: `${badge.name} — Inaction` }); } catch {}
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `inaction-${badge.id}.png`;
+          a.click(); URL.revokeObjectURL(url);
+        }
+      }, 'image/png');
+    }
+
+    // ── State ──
+    const state = {
+      startTime: null, remaining: 0, timerInterval: null,
+      audioCtx: null, audioNodes: [], gainNode: null, wakeLock: null,
+    };
+
+    // ── Screen Navigation ──
+    function showScreen(id) {
+      // Remove badge notification when leaving complete screen
+      const notif = document.getElementById('badge-notification');
+      if (notif) notif.remove();
+
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (id === 'home') {
+        renderHeatmap();
+        updateBadgeDot();
+        const btn = document.querySelector('.start-btn');
+        if (hasSessionToday()) {
+          btn.classList.add('done'); btn.textContent = 'Done'; btn.onclick = null;
+        } else {
+          btn.classList.remove('done'); btn.textContent = 'Start'; btn.onclick = () => showScreen('setup');
+        }
+      }
+      if (id === 'setup' || id === 'settings') renderSettings();
+      if (id === 'badges') renderBadges();
+    }
+
+    // ── Settings UI ──
+    const DURATION_STEPS = [300, 600, 900, 1200, 1800];
+    const DURATION_LABELS = ['5m', '10m', '15m', '20m', '30m'];
+
+    function renderSettings() {
+      const s = getSettings();
+      // Duration slider (setup screen)
+      const idx = DURATION_STEPS.indexOf(s.duration);
+      const slider = document.getElementById('duration-slider');
+      slider.value = idx >= 0 ? idx : 1;
+      document.querySelectorAll('.slider-ticks span').forEach((tick, i) => {
+        tick.classList.toggle('active', i === parseInt(slider.value));
+      });
+      // Sound toggle (setup screen)
+      const soundToggle = document.getElementById('sound-toggle');
+      soundToggle.classList.toggle('on', s.sound);
+      // Toggles (settings screen)
+      document.getElementById('toggle-haptic').classList.toggle('on', s.haptic);
+      document.getElementById('toggle-reminder').classList.toggle('on', s.reminder);
+    }
+
+    document.getElementById('duration-slider').addEventListener('input', e => {
+      const s = getSettings();
+      s.duration = DURATION_STEPS[e.target.value];
+      saveSettings(s);
+      renderSettings();
+    });
+
+    function toggleSound() {
+      const s = getSettings();
+      s.sound = !s.sound;
+      saveSettings(s);
+      renderSettings();
+    }
+
+    function toggleSetting(key) {
+      const s = getSettings();
+      s[key] = !s[key];
+      if (key === 'reminder' && s.reminder) {
+        Notification.requestPermission().then(p => {
+          if (p !== 'granted') {
+            s.reminder = false;
+            saveSettings(s);
+            renderSettings();
+          } else {
+            scheduleReminder();
+          }
+        });
+      }
+      saveSettings(s);
+      renderSettings();
+      if (key === 'reminder' && !s.reminder) clearTimeout(reminderTimeout);
+    }
+
+    // ── Daily Reminder ──
+    let reminderTimeout = null;
+
+    function scheduleReminder() {
+      clearTimeout(reminderTimeout);
+      if (!getSettings().reminder || hasSessionToday()) return;
+      if (Notification.permission !== 'granted') return;
+
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(20, 0, 0, 0);
+
+      if (now >= target) {
+        showReminder();
+      } else {
+        reminderTimeout = setTimeout(showReminder, target - now);
+      }
+    }
+
+    function showReminder() {
+      if (hasSessionToday() || !getSettings().reminder) return;
+      if (Notification.permission !== 'granted') return;
+      new Notification('Inaction', {
+        body: "You haven't planted grass today 🌱",
+        icon: 'icon-192.png',
+      });
+    }
+
+    // ── Data: Export / Import / Reset ──
+    function exportData() {
+      const payload = { ...getData(), badges: getBadgeData() };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `inaction-${toDateKey(new Date())}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importData() {
+      document.getElementById('import-input').click();
+    }
+
+    document.getElementById('import-input').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (imported.sessions) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ sessions: imported.sessions }));
+            if (imported.badges) localStorage.setItem(BADGES_KEY, JSON.stringify(imported.badges));
+            showScreen('home');
+          }
+        } catch {}
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    function resetData() {
+      if (confirm('Reset all data? This cannot be undone.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(BADGES_KEY);
+        showScreen('home');
+      }
+    }
+
+    // ── Heatmap ──
+    function durationToLevel(sec) {
+      if (sec >= 1800) return 'level-5';
+      if (sec >= 1200) return 'level-4';
+      if (sec >= 900)  return 'level-3';
+      if (sec >= 600)  return 'level-2';
+      return 'level-1';
+    }
+
+    function renderHeatmap() {
+      const data = getData();
+      const container = document.getElementById('heatmap');
+      const wrapper = document.getElementById('heatmap-wrapper');
+      container.innerHTML = '';
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      const todayKey = toDateKey(today);
+      // Monday-based: Mon=0, Tue=1, ..., Sun=6
+      const monDow = d => (d.getDay() + 6) % 7;
+
+      // Start from earliest session week, or current week if none
+      const sessionKeys = Object.keys(data.sessions).sort();
+      const startDate = new Date(today);
+      if (sessionKeys.length > 0) {
+        startDate.setTime(new Date(sessionKeys[0] + 'T00:00:00').getTime());
+      }
+      startDate.setDate(startDate.getDate() - monDow(startDate)); // align to Monday
+
+      // End at Sunday of current week
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + (6 - monDow(today)));
+
+      const current = new Date(startDate);
+      while (current <= endDate) {
+        const key = toDateKey(current);
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        if (current > today) {
+          cell.classList.add('future');
+        } else {
+          const sec = data.sessions[key];
+          if (sec != null) cell.classList.add(durationToLevel(sec));
+        }
+        if (key === todayKey) cell.classList.add('today');
+        container.appendChild(cell);
+        current.setDate(current.getDate() + 1);
+      }
+      requestAnimationFrame(() => {
+        const overflow = wrapper.scrollWidth - wrapper.clientWidth;
+        if (overflow > 0) wrapper.scrollLeft = Math.max(0, overflow - wrapper.clientWidth / 2);
+      });
+    }
+
+    // ── Audio Engine ──
+    function startAudio() {
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = state.audioCtx;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0, ctx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 2);
+      masterGain.connect(ctx.destination);
+      state.gainNode = masterGain;
+
+      const baseFreq = 180, beatFreq = 10;
+      const leftOsc = ctx.createOscillator();
+      const rightOsc = ctx.createOscillator();
+      leftOsc.type = rightOsc.type = 'sine';
+      leftOsc.frequency.value = baseFreq;
+      rightOsc.frequency.value = baseFreq + beatFreq;
+
+      const leftPan = ctx.createStereoPanner();
+      const rightPan = ctx.createStereoPanner();
+      leftPan.pan.value = -1; rightPan.pan.value = 1;
+
+      const binauralGain = ctx.createGain();
+      binauralGain.gain.value = 0.12;
+      leftOsc.connect(leftPan).connect(binauralGain);
+      rightOsc.connect(rightPan).connect(binauralGain);
+      binauralGain.connect(masterGain);
+      leftOsc.start(); rightOsc.start();
+      state.audioNodes.push(leftOsc, rightOsc);
+
+      [baseFreq * 2, baseFreq * 3].forEach(f => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine'; osc.frequency.value = f;
+        const g = ctx.createGain(); g.gain.value = 0.02;
+        osc.connect(g).connect(masterGain); osc.start();
+        state.audioNodes.push(osc);
+      });
+    }
+
+    function stopAudio() {
+      if (state.gainNode && state.audioCtx) {
+        const ctx = state.audioCtx;
+        state.gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+        setTimeout(() => {
+          state.audioNodes.forEach(n => { try { n.stop(); } catch {} });
+          state.audioNodes = []; state.gainNode = null;
+          try { ctx.close(); } catch {} state.audioCtx = null;
+        }, 600);
+      } else {
+        state.audioNodes.forEach(n => { try { n.stop(); } catch {} });
+        state.audioNodes = [];
+        if (state.audioCtx) { try { state.audioCtx.close(); } catch {} }
+        state.audioCtx = null; state.gainNode = null;
+      }
+    }
+
+    function playChime() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [528, 660, 792].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
+        gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + i * 0.15 + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 2.5);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime + i * 0.15);
+        osc.stop(ctx.currentTime + i * 0.15 + 2.5);
+      });
+      setTimeout(() => ctx.close(), 3000);
+    }
+
+    // ── Wake Lock ──
+    async function requestWakeLock() {
+      try { if ('wakeLock' in navigator) state.wakeLock = await navigator.wakeLock.request('screen'); } catch {}
+    }
+    function releaseWakeLock() {
+      if (state.wakeLock) { state.wakeLock.release().catch(() => {}); state.wakeLock = null; }
+    }
+
+    // ── Timer ──
+    function startSession() {
+      if (hasSessionToday()) return;
+      const settings = getSettings();
+      state.remaining = settings.duration;
+      state.startTime = Date.now();
+      showScreen('session');
+      updateTimerDisplay();
+
+      if (settings.sound) startAudio();
+      requestWakeLock();
+
+      state.timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+        state.remaining = Math.max(0, settings.duration - elapsed);
+        updateTimerDisplay();
+        if (state.remaining <= 0) completeSession();
+      }, 250);
+    }
+
+    function updateTimerDisplay() {
+      const min = Math.floor(state.remaining / 60);
+      const sec = state.remaining % 60;
+      const display = `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+      document.getElementById('timer').textContent = display;
+      document.title = state.remaining > 0 ? `${display} — Inaction` : 'Inaction';
+    }
+
+    function completeSession() {
+      clearInterval(state.timerInterval); state.timerInterval = null;
+      stopAudio(); releaseWakeLock();
+
+      const settings = getSettings();
+      const duration = settings.duration;
+      saveSession(duration);
+
+      // Haptic
+      if (settings.haptic && navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+      const min = Math.floor(duration / 60);
+      document.getElementById('complete-detail').textContent =
+        `You did nothing for ${min} minutes`;
+
+      const level = durationToLevel(duration).replace('level-', '');
+      document.querySelectorAll('#complete-legend .legend-item').forEach(item => {
+        if (item.dataset.level === level) {
+          item.classList.add('active'); item.classList.remove('dim');
+        } else {
+          item.classList.add('dim'); item.classList.remove('active');
+        }
+      });
+
+      // Badge evaluation
+      const newBadges = evaluateNewBadges();
+
+      showScreen('complete');
+      setTimeout(playChime, 300);
+      if (newBadges.length > 0) {
+        setTimeout(() => showBadgeNotification(newBadges), 1200);
+      }
+    }
+
+    function quitSession() {
+      clearInterval(state.timerInterval); state.timerInterval = null;
+      stopAudio(); releaseWakeLock();
+      document.title = 'Inaction';
+      showScreen('home');
+    }
+
+    // ── Visibility Change ──
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        scheduleReminder();
+        if (state.timerInterval) {
+          const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+          state.remaining = Math.max(0, getSettings().duration - elapsed);
+          updateTimerDisplay();
+          if (state.remaining <= 0) completeSession();
+        }
+      }
+    });
+
+    // ── Init ──
+    window.showScreen = showScreen;
+    window.startSession = startSession;
+    window.toggleSound = toggleSound;
+    window.shareBadge = shareBadge;
+    renderHeatmap();
+    scheduleReminder();
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
+</body>
+</html>
