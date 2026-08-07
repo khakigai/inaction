@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inaction — Promo Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 80px;
+      gap: 40px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .subtitle { font-size: 13px; color: #666; margin-top: -28px; }
+    .canvas-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    canvas {
+      border-radius: 12px;
+      max-width: 100%;
+      height: auto;
+    }
+    #mockup-3up { width: 1200px; }
+    #mockup-story-home, #mockup-story-session, #mockup-story-complete { width: 540px; }
+    #mockup-twitter { width: 600px; }
+    .canvas-label { font-size: 11px; color: #555; }
+    .download-btn {
+      padding: 8px 24px;
+      border: 1px solid #333;
+      border-radius: 20px;
+      background: transparent;
+      color: #888;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .download-btn:hover { border-color: #666; color: #fff; }
+    .row { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<h1>Inaction</h1>
+<p class="subtitle">Promotional mockups — click Download to save PNG</p>
+
+<div class="canvas-group">
+  <canvas id="mockup-3up" width="2400" height="1600"></canvas>
+  <span class="canvas-label">3-Screen Showcase (2400 x 1600)</span>
+  <button class="download-btn" onclick="download('mockup-3up','inaction-mockup-3up.png')">Download</button>
+</div>
+
+<div class="row">
+  <div class="canvas-group">
+    <canvas id="mockup-story-home" width="1080" height="1920"></canvas>
+    <span class="canvas-label">Story — Home</span>
+    <button class="download-btn" onclick="download('mockup-story-home','inaction-story-home.png')">Download</button>
+  </div>
+  <div class="canvas-group">
+    <canvas id="mockup-story-session" width="1080" height="1920"></canvas>
+    <span class="canvas-label">Story — Session</span>
+    <button class="download-btn" onclick="download('mockup-story-session','inaction-story-session.png')">Download</button>
+  </div>
+  <div class="canvas-group">
+    <canvas id="mockup-story-complete" width="1080" height="1920"></canvas>
+    <span class="canvas-label">Story — Complete</span>
+    <button class="download-btn" onclick="download('mockup-story-complete','inaction-story-complete.png')">Download</button>
+  </div>
+</div>
+
+<div class="canvas-group">
+  <canvas id="mockup-twitter" width="2400" height="1350"></canvas>
+  <span class="canvas-label">X / Twitter Card (1200 x 675)</span>
+  <button class="download-btn" onclick="download('mockup-twitter','inaction-twitter-card.png')">Download</button>
+</div>
+
+<script>
+document.fonts.ready.then(() => {
+
+  // ── Helpers ──
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function roundRectClip(ctx, x, y, w, h, r, fn) {
+    ctx.save();
+    roundRect(ctx, x, y, w, h, r);
+    ctx.clip();
+    fn();
+    ctx.restore();
+  }
+
+  const LEVELS = ['#EAE6DE', '#c6e6a3', '#85d068', '#4aad3a', '#2d8a30', '#1a6b22'];
+
+  let seed = 42;
+  function seededRandom() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  function resetSeed() { seed = 42; }
+
+  function drawGrayGradientBg(ctx, W, H) {
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, '#d4d4d4');
+    grad.addColorStop(0.5, '#b8b8b8');
+    grad.addColorStop(1, '#a0a0a0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawScreenShadow(ctx, x, y, w, h, r) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 60;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 20;
+    roundRect(ctx, x, y, w, h, r);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Status bar (removed — no time/battery/signal) ──
+  function drawStatusBar(ctx, x, y, w, dark) {
+    // intentionally empty
+  }
+
+  // ── Heatmap ──
+  function drawHeatmap(ctx, cx, cy, cellSize, gap, cols, rows) {
+    resetSeed();
+    const totalW = cols * (cellSize + gap) - gap;
+    const totalH = rows * (cellSize + gap) - gap;
+    const startX = cx - totalW / 2;
+    const startY = cy - totalH / 2;
+
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        const x = startX + col * (cellSize + gap);
+        const y = startY + row * (cellSize + gap);
+        const r = cellSize * 0.22;
+
+        const recency = col / cols;
+        const prob = recency * 0.55 + 0.08;
+        let level = 0;
+        if (col < cols - 1 || row <= 3) {  // Don't fill future days
+          if (seededRandom() < prob) {
+            level = Math.floor(seededRandom() * 5) + 1;
+          }
+          if (col >= cols - 3 && seededRandom() < 0.65) {
+            level = Math.floor(seededRandom() * 3) + 2;
+          }
+        }
+        // Future days (after today in last column)
+        if (col === cols - 1 && row > 3) level = 0;
+
+        roundRect(ctx, x, y, cellSize, cellSize, r);
+        ctx.fillStyle = LEVELS[level];
+        ctx.fill();
+
+        // Today marker
+        if (col === cols - 1 && row === 3) {
+          roundRect(ctx, x, y, cellSize, cellSize, r);
+          ctx.strokeStyle = '#E85D04';
+          ctx.lineWidth = cellSize * 0.16;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  // ── Breathing circle ──
+  function drawBreathingCircle(ctx, cx, cy, radius) {
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius * 1.4);
+    grad.addColorStop(0, 'rgba(57, 211, 83, 0.07)');
+    grad.addColorStop(1, 'rgba(57, 211, 83, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 1.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    const inner = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    inner.addColorStop(0, 'rgba(57, 211, 83, 0.1)');
+    inner.addColorStop(1, 'rgba(57, 211, 83, 0)');
+    ctx.fillStyle = inner;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(57, 211, 83, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // ── Legend ──
+  function drawLegend(ctx, cx, y, cellSize, activeLevel) {
+    const labels = ['5m', '10m', '15m', '20m', '30m'];
+    const colors = LEVELS.slice(1);
+    const itemGap = cellSize * 5;
+    const totalW = labels.length * itemGap;
+    const startX = cx - totalW / 2;
+
+    for (let i = 0; i < labels.length; i++) {
+      const x = startX + i * itemGap;
+      const isActive = (i + 1) === activeLevel;
+      const size = isActive ? cellSize * 1.3 : cellSize;
+      const yOff = isActive ? -(size - cellSize) / 2 : 0;
+      const alpha = (activeLevel && !isActive) ? 0.3 : 1;
+
+      ctx.globalAlpha = alpha;
+      roundRect(ctx, x, y + yOff, size, size, size * 0.2);
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+      ctx.fillStyle = isActive ? '#4A4A4A' : '#B0A99E';
+      ctx.font = isActive ? `600 ${cellSize * 0.95}px "Inter", sans-serif` : `300 ${cellSize * 0.9}px "Inter", sans-serif`;
+      ctx.textAlign = 'left';
+      ctx.fillText(labels[i], x + size + 4, y + yOff + size * 0.8);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // ════════════════════════════════════
+  //  Draw a screen's full content
+  // ════════════════════════════════════
+
+  function drawHomeScreen(ctx, x, y, w, h, r) {
+    drawScreenShadow(ctx, x, y, w, h, r);
+    roundRectClip(ctx, x, y, w, h, r, () => {
+      // Background
+      ctx.fillStyle = '#F5F1E8';
+      ctx.fillRect(x, y, w, h);
+
+      // Status bar
+      drawStatusBar(ctx, x, y, w, false);
+
+      // Top bar icons
+      ctx.fillStyle = '#B0A99E';
+      ctx.font = '300 28px "Inter", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('\u2606', x + 36, y + 90);
+      ctx.textAlign = 'right';
+      ctx.fillText('\u2699', x + w - 36, y + 90);
+
+      // Title
+      ctx.fillStyle = '#1A1A1A';
+      ctx.font = `900 ${w * 0.156}px "Playfair Display", Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Inaction', x + w / 2, y + h * 0.38);
+
+      // Heatmap card — size computed from screen width
+      const cardPad = w * 0.075;
+      const cardW = w - cardPad * 2;
+      const cols = 27, rows = 7;
+      const hmPad = cardW * 0.04;  // internal padding
+      const availW = cardW - hmPad * 2;
+      const cellGapRatio = 0.3;  // gap = cellSize * ratio
+      // solve: cols * (cs + cs*ratio) - cs*ratio = availW
+      const cellSize = Math.floor((availW) / (cols * (1 + cellGapRatio) - cellGapRatio));
+      const gap = Math.round(cellSize * cellGapRatio);
+      const hmH = rows * (cellSize + gap) - gap;
+      const cardH = hmH + hmPad * 2;
+      const cardX = x + cardPad, cardY = y + h * 0.42;
+
+      ctx.shadowColor = 'rgba(0,0,0,0.06)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 2;
+      roundRect(ctx, cardX, cardY, cardW, cardH, w * 0.05);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+
+      // Clip heatmap to card
+      ctx.save();
+      roundRect(ctx, cardX, cardY, cardW, cardH, w * 0.05);
+      ctx.clip();
+      drawHeatmap(ctx, x + w / 2, cardY + cardH / 2, cellSize, gap, cols, rows);
+      ctx.restore();
+
+      // Start button
+      const btnR = w * 0.12;
+      const btnY = y + h * 0.78;
+      ctx.beginPath();
+      ctx.arc(x + w / 2, btnY, btnR, 0, Math.PI * 2);
+      ctx.strokeStyle = '#B0A99E';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.fillStyle = '#B0A99E';
+      ctx.font = `500 ${w * 0.042}px "Inter", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('S t a r t', x + w / 2, btnY + w * 0.014);
+    });
+  }
+
+  function drawSessionScreen(ctx, x, y, w, h, r) {
+    drawScreenShadow(ctx, x, y, w, h, r);
+    roundRectClip(ctx, x, y, w, h, r, () => {
+      ctx.fillStyle = '#0d1117';
+      ctx.fillRect(x, y, w, h);
+
+      drawStatusBar(ctx, x, y, w, true);
+
+      const centerY = y + h * 0.42;
+      drawBreathingCircle(ctx, x + w / 2, centerY, w * 0.24);
+
+      ctx.fillStyle = '#484f58';
+      ctx.font = `300 ${w * 0.13}px "Inter", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('07:23', x + w / 2, centerY + w * 0.40);
+
+      ctx.fillStyle = '#484f58';
+      ctx.font = `400 ${w * 0.043}px "Inter", sans-serif`;
+      ctx.fillText('Q u i t', x + w / 2, centerY + w * 0.40 + w * 0.14);
+    });
+  }
+
+  function drawCompleteScreen(ctx, x, y, w, h, r) {
+    drawScreenShadow(ctx, x, y, w, h, r);
+    roundRectClip(ctx, x, y, w, h, r, () => {
+      ctx.fillStyle = '#F5F1E8';
+      ctx.fillRect(x, y, w, h);
+
+      drawStatusBar(ctx, x, y, w, false);
+
+      const midY = y + h * 0.38;
+      const unit = w / 460;  // scale factor
+
+      // Grass planted + leaf
+      ctx.fillStyle = '#1A1A1A';
+      ctx.font = `900 ${48 * unit}px "Playfair Display", Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Grass planted', x + w / 2 - 16 * unit, midY);
+      ctx.font = `${36 * unit}px serif`;
+      ctx.fillText('🌱', x + w / 2 + 165 * unit, midY);
+
+      // Detail
+      ctx.fillStyle = '#757575';
+      ctx.font = `300 ${22 * unit}px "Inter", sans-serif`;
+      ctx.fillText('You did nothing for 10 minutes', x + w / 2, midY + 48 * unit);
+
+      // Legend
+      drawLegend(ctx, x + w / 2, midY + 100 * unit, 11 * unit, 2);
+
+      // Done
+      ctx.fillStyle = '#B0A99E';
+      ctx.font = `400 ${22 * unit}px "Inter", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Done', x + w / 2, midY + 180 * unit);
+
+      // Badge notification card
+      const notifW = w * 0.82, notifH = 80 * unit;
+      const notifX = x + (w - notifW) / 2;
+      const notifY = y + h * 0.72;
+
+      ctx.shadowColor = 'rgba(0,0,0,0.08)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 4;
+      roundRect(ctx, notifX, notifY, notifW, notifH, 24 * unit);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+
+      // Badge emoji
+      ctx.font = `${36 * unit}px serif`;
+      ctx.textAlign = 'left';
+      ctx.fillText('🌱', notifX + 18 * unit, notifY + notifH * 0.65);
+
+      // Badge text
+      ctx.fillStyle = '#B0A99E';
+      ctx.font = `500 ${13 * unit}px "Inter", sans-serif`;
+      ctx.fillText('BADGE EARNED', notifX + 68 * unit, notifY + notifH * 0.37);
+      ctx.fillStyle = '#1A1A1A';
+      ctx.font = `700 ${22 * unit}px "Playfair Display", serif`;
+      ctx.fillText('First Grass', notifX + 68 * unit, notifY + notifH * 0.72);
+
+      // Share button
+      const btnW = 76 * unit, btnH = 42 * unit, btnR = 21 * unit;
+      roundRect(ctx, notifX + notifW - btnW - 18 * unit, notifY + (notifH - btnH) / 2, btnW, btnH, btnR);
+      ctx.strokeStyle = '#D0CBC2';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#757575';
+      ctx.font = `500 ${14 * unit}px "Inter", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Share', notifX + notifW - 18 * unit - btnW / 2, notifY + notifH / 2 + 5 * unit);
+    });
+  }
+
+  // ════════════════════════════════════
+  //  MAIN: 3-Up Showcase
+  // ════════════════════════════════════
+  (function() {
+    const c = document.getElementById('mockup-3up');
+    const ctx = c.getContext('2d');
+    const W = 2400, H = 1600;
+
+    drawGrayGradientBg(ctx, W, H);
+
+    // Screen dimensions (iPhone-like aspect ratio ≈ 19.5:9)
+    const scrW = 460, scrH = 996;
+    const cornerR = 48;
+    const gap = 60;
+    const totalW = scrW * 3 + gap * 2;
+    const startX = (W - totalW) / 2;
+
+    // Left screen (Home) — slightly lower
+    const x1 = startX, y1 = (H - scrH) / 2 + 30;
+    drawHomeScreen(ctx, x1, y1, scrW, scrH, cornerR);
+
+    // Center screen (Session) — slightly higher (prominent)
+    const x2 = startX + scrW + gap, y2 = (H - scrH) / 2 - 30;
+    drawSessionScreen(ctx, x2, y2, scrW, scrH, cornerR);
+
+    // Right screen (Complete) — slightly lower
+    const x3 = startX + (scrW + gap) * 2, y3 = (H - scrH) / 2 + 30;
+    drawCompleteScreen(ctx, x3, y3, scrW, scrH, cornerR);
+  })();
+
+  // ════════════════════════════════════
+  //  Story mockups (single screen, gradient bg)
+  // ════════════════════════════════════
+
+  function drawStoryMockup(canvasId, drawFn) {
+    const c = document.getElementById(canvasId);
+    const ctx = c.getContext('2d');
+    const W = 1080, H = 1920;
+
+    // Subtle gradient background
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, '#ccc');
+    grad.addColorStop(1, '#999');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    const scrW = 740, scrH = 1600;
+    const sx = (W - scrW) / 2, sy = (H - scrH) / 2;
+    drawFn(ctx, sx, sy, scrW, scrH, 56);
+
+    // Bottom branding
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '400 20px "Inter", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('I N A C T I O N', W / 2, H - 60);
+  }
+
+  drawStoryMockup('mockup-story-home', drawHomeScreen);
+  drawStoryMockup('mockup-story-session', drawSessionScreen);
+  drawStoryMockup('mockup-story-complete', drawCompleteScreen);
+
+  // ════════════════════════════════════
+  //  Twitter Card
+  // ════════════════════════════════════
+  (function() {
+    const c = document.getElementById('mockup-twitter');
+    const ctx = c.getContext('2d');
+    const scale = 2;
+    const W = 1200, H = 675;
+
+    ctx.scale(scale, scale);
+
+    drawGrayGradientBg(ctx, W, H);
+
+    // Left: text on gradient
+    ctx.fillStyle = '#fff';
+    ctx.font = '900 56px "Playfair Display", Georgia, serif';
+    ctx.textAlign = 'left';
+    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+    ctx.shadowBlur = 10;
+    ctx.fillText('Inaction', 72, 250);
+    ctx.shadowColor = 'transparent';
+
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '300 22px "Inter", sans-serif';
+    ctx.fillText('An app for doing nothing.', 72, 300);
+    ctx.fillText('Plant grass by sitting still.', 72, 332);
+
+    // Small legend
+    const labels = ['5m', '10m', '15m', '20m', '30m'];
+    const colors = LEVELS.slice(1);
+    let lx = 72;
+    for (let i = 0; i < labels.length; i++) {
+      roundRect(ctx, lx, 420, 12, 12, 2.5);
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '300 12px "Inter", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(labels[i], lx + 16, 431);
+      lx += 56;
+    }
+
+    // Right: two small screens
+    const miniW = 230, miniH = 498;
+    const miniR = 28;
+
+    // Home screen (back)
+    drawHomeScreen(ctx, W - miniW * 2 - 60, (H - miniH) / 2 + 15, miniW, miniH, miniR);
+    // Session screen (front, overlapping)
+    drawSessionScreen(ctx, W - miniW - 50, (H - miniH) / 2 - 15, miniW, miniH, miniR);
+  })();
+
+});
+
+function download(id, filename) {
+  const canvas = document.getElementById(id);
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+</script>
+</body>
+</html>
