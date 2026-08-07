@@ -89,8 +89,6 @@ struct HomeView: View {
         .sheet(isPresented: $showHeatmapDetail) {
             HeatmapDetailView(
                 sessions: sessionDict,
-                totalSessions: sessions.count,
-                totalMinutes: sessions.reduce(0) { $0 + $1.durationSeconds } / 60,
                 onDismiss: { showHeatmapDetail = false }
             )
             .presentationDetents([.large])
