@@ -3,30 +3,33 @@ import Observation
 
 @Observable
 final class AppSettings {
-    private let defaults = UserDefaults.standard
+    @ObservationIgnored private let defaults = UserDefaults.standard
 
     var duration: Int {
-        get { defaults.object(forKey: "inaction.duration") as? Int ?? 600 }
-        set { defaults.set(newValue, forKey: "inaction.duration") }
+        didSet { defaults.set(duration, forKey: "inaction.duration") }
     }
 
     var soundEnabled: Bool {
-        get { defaults.object(forKey: "inaction.sound") as? Bool ?? true }
-        set { defaults.set(newValue, forKey: "inaction.sound") }
+        didSet { defaults.set(soundEnabled, forKey: "inaction.sound") }
     }
 
     var hapticEnabled: Bool {
-        get { defaults.object(forKey: "inaction.haptic") as? Bool ?? true }
-        set { defaults.set(newValue, forKey: "inaction.haptic") }
+        didSet { defaults.set(hapticEnabled, forKey: "inaction.haptic") }
     }
 
     var reminderEnabled: Bool {
-        get { defaults.object(forKey: "inaction.reminder") as? Bool ?? false }
-        set { defaults.set(newValue, forKey: "inaction.reminder") }
+        didSet { defaults.set(reminderEnabled, forKey: "inaction.reminder") }
     }
 
     var lastSeenBadgeCount: Int {
-        get { defaults.integer(forKey: "inaction.lastSeenBadgeCount") }
-        set { defaults.set(newValue, forKey: "inaction.lastSeenBadgeCount") }
+        didSet { defaults.set(lastSeenBadgeCount, forKey: "inaction.lastSeenBadgeCount") }
+    }
+
+    init() {
+        duration = defaults.object(forKey: "inaction.duration") as? Int ?? 600
+        soundEnabled = defaults.object(forKey: "inaction.sound") as? Bool ?? true
+        hapticEnabled = defaults.object(forKey: "inaction.haptic") as? Bool ?? true
+        reminderEnabled = defaults.object(forKey: "inaction.reminder") as? Bool ?? false
+        lastSeenBadgeCount = defaults.integer(forKey: "inaction.lastSeenBadgeCount")
     }
 }

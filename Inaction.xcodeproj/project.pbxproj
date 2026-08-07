@@ -7,37 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F10000000000000000000001 /* InactionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001; };
-		F10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002; };
-		F10000000000000000000003 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003; };
-		F10000000000000000000004 /* BadgeRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000004; };
-		F10000000000000000000005 /* BadgeDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005; };
-		F10000000000000000000006 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000006; };
-		F10000000000000000000007 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000007; };
-		F10000000000000000000008 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000008; };
-		F10000000000000000000009 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000009; };
-		F1000000000000000000000A /* CompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000A; };
-		F1000000000000000000000B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000B; };
-		F1000000000000000000000C /* BadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000C; };
-		F1000000000000000000000D /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000D; };
-		F1000000000000000000000E /* BreathingCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000E; };
-		F1000000000000000000000F /* DurationSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000F; };
-		F10000000000000000000010 /* BadgeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000010; };
-		F10000000000000000000011 /* BadgeNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000011; };
-		F10000000000000000000012 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000012; };
-		F10000000000000000000013 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000013; };
-		F10000000000000000000014 /* BadgeEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000014; };
-		F10000000000000000000015 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000015; };
-		F10000000000000000000016 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000016; };
-		F10000000000000000000017 /* ShareCardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000017; };
-		F10000000000000000000018 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000018; };
-		F10000000000000000000019 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000019; };
-		F1000000000000000000001A /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001A; };
-		F1000000000000000000001B /* DurationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001B; };
-		F1000000000000000000001C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001C; };
-		F1000000000000000000001D /* PlayfairDisplay-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001E; };
-		F1000000000000000000001E /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001F; };
-		F10000000000000000000020 /* BadgeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000020; };
+		F1000000000000000000A001 /* InactionWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000A001 /* InactionWidget.swift */; };
+		F1000000000000000000A002 /* InactionWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000A002 /* InactionWidgetBundle.swift */; };
+		F1000000000000000000A003 /* InactionWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F2000000000000000000A005 /* InactionWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F1000000000000000000A004 /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000A006 /* WidgetDataManager.swift */; };
+		F10000000000000000000001 /* InactionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* InactionApp.swift */; };
+		F10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* ContentView.swift */; };
+		F10000000000000000000003 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* Session.swift */; };
+		F10000000000000000000004 /* BadgeRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000004 /* BadgeRecord.swift */; };
+		F10000000000000000000005 /* BadgeDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005 /* BadgeDefinition.swift */; };
+		F10000000000000000000006 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000006 /* AppSettings.swift */; };
+		F10000000000000000000007 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000007 /* HomeView.swift */; };
+		F10000000000000000000008 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000008 /* SetupView.swift */; };
+		F10000000000000000000009 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000009 /* SessionView.swift */; };
+		F1000000000000000000000A /* CompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000A /* CompleteView.swift */; };
+		F1000000000000000000000B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000B /* SettingsView.swift */; };
+		F1000000000000000000000C /* BadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000C /* BadgesView.swift */; };
+		F1000000000000000000000D /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000D /* HeatmapView.swift */; };
+		F1000000000000000000000E /* BreathingCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000E /* BreathingCircleView.swift */; };
+		F1000000000000000000000F /* DurationSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000000F /* DurationSliderView.swift */; };
+		F10000000000000000000010 /* BadgeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000010 /* BadgeCardView.swift */; };
+		F10000000000000000000011 /* BadgeNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000011 /* BadgeNotificationView.swift */; };
+		F10000000000000000000012 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000012 /* LegendView.swift */; };
+		F10000000000000000000013 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000013 /* AudioEngine.swift */; };
+		F10000000000000000000014 /* BadgeEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000014 /* BadgeEvaluator.swift */; };
+		F10000000000000000000015 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000015 /* NotificationManager.swift */; };
+		F10000000000000000000016 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000016 /* HapticManager.swift */; };
+		F10000000000000000000017 /* ShareCardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000017 /* ShareCardRenderer.swift */; };
+		F10000000000000000000018 /* DataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000018 /* DataExporter.swift */; };
+		F10000000000000000000019 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000019 /* DesignTokens.swift */; };
+		F1000000000000000000001A /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001A /* DateHelpers.swift */; };
+		F1000000000000000000001B /* DurationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001B /* DurationLevel.swift */; };
+		F1000000000000000000001C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001C /* Assets.xcassets */; };
+		F1000000000000000000001D /* PlayfairDisplay-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001E /* PlayfairDisplay-Black.ttf */; };
+		F1000000000000000000001E /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001F /* Inter.ttf */; };
+		F10000000000000000000020 /* BadgeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000020 /* BadgeDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,15 +73,53 @@
 		F2000000000000000000001A /* DateHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelpers.swift; sourceTree = "<group>"; };
 		F2000000000000000000001B /* DurationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationLevel.swift; sourceTree = "<group>"; };
 		F2000000000000000000001C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		F20000000000000000000020 /* BadgeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeDetailView.swift; sourceTree = "<group>"; };
 		F2000000000000000000001D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F2000000000000000000001E /* PlayfairDisplay-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlayfairDisplay-Black.ttf"; sourceTree = "<group>"; };
-		F2000000000000000000001F /* Inter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter.ttf"; sourceTree = "<group>"; };
+		F2000000000000000000001F /* Inter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttf; sourceTree = "<group>"; };
+		F20000000000000000000020 /* BadgeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeDetailView.swift; sourceTree = "<group>"; };
 		F20000000000000000000090 /* Inaction.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inaction.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2000000000000000000A001 /* InactionWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactionWidget.swift; sourceTree = "<group>"; };
+		F2000000000000000000A002 /* InactionWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactionWidgetBundle.swift; sourceTree = "<group>"; };
+		F2000000000000000000A003 /* InactionWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InactionWidget.entitlements; sourceTree = "<group>"; };
+		F2000000000000000000A004 /* Inaction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Inaction.entitlements; sourceTree = "<group>"; };
+		F2000000000000000000A005 /* InactionWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = InactionWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2000000000000000000A006 /* WidgetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataManager.swift; sourceTree = "<group>"; };
+		F2000000000000000000A007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXContainerItemProxy section */
+		F5000000000000000000A002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F70000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F5000000000000000000A001;
+			remoteInfo = InactionWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F6000000000000000000A003 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F1000000000000000000A003 /* InactionWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		F30000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3000000000000000000A001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -91,6 +133,7 @@
 			isa = PBXGroup;
 			children = (
 				F40000000000000000000002 /* Inaction */,
+				F4000000000000000000A001 /* InactionWidget */,
 				F40000000000000000000009 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,6 +150,7 @@
 				F40000000000000000000007 /* Utilities */,
 				F40000000000000000000008 /* Resources */,
 				F2000000000000000000001D /* Info.plist */,
+				F2000000000000000000A004 /* Inaction.entitlements */,
 			);
 			path = Inaction;
 			sourceTree = "<group>";
@@ -158,6 +202,7 @@
 				F20000000000000000000016 /* HapticManager.swift */,
 				F20000000000000000000017 /* ShareCardRenderer.swift */,
 				F20000000000000000000018 /* DataExporter.swift */,
+				F2000000000000000000A006 /* WidgetDataManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -181,6 +226,26 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		F40000000000000000000009 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F20000000000000000000090 /* Inaction.app */,
+				F2000000000000000000A005 /* InactionWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F4000000000000000000A001 /* InactionWidget */ = {
+			isa = PBXGroup;
+			children = (
+				F2000000000000000000A001 /* InactionWidget.swift */,
+				F2000000000000000000A002 /* InactionWidgetBundle.swift */,
+				F2000000000000000000A007 /* Info.plist */,
+				F2000000000000000000A003 /* InactionWidget.entitlements */,
+			);
+			path = InactionWidget;
+			sourceTree = "<group>";
+		};
 		F4000000000000000000000A /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,14 +253,6 @@
 				F2000000000000000000001F /* Inter.ttf */,
 			);
 			path = Fonts;
-			sourceTree = "<group>";
-		};
-		F40000000000000000000009 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F20000000000000000000090 /* Inaction.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,17 +265,44 @@
 				F60000000000000000000001 /* Sources */,
 				F30000000000000000000001 /* Frameworks */,
 				F60000000000000000000002 /* Resources */,
+				F6000000000000000000A003 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F5000000000000000000A003 /* PBXTargetDependency */,
 			);
 			name = Inaction;
 			productName = Inaction;
 			productReference = F20000000000000000000090 /* Inaction.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F5000000000000000000A001 /* InactionWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8000000000000000000A001 /* Build configuration list for PBXNativeTarget "InactionWidgetExtension" */;
+			buildPhases = (
+				F6000000000000000000A001 /* Sources */,
+				F3000000000000000000A001 /* Frameworks */,
+				F6000000000000000000A002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InactionWidgetExtension;
+			productName = InactionWidgetExtension;
+			productReference = F2000000000000000000A005 /* InactionWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXTargetDependency section */
+		F5000000000000000000A003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F5000000000000000000A001 /* InactionWidgetExtension */;
+			targetProxy = F5000000000000000000A002 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
 		F70000000000000000000001 /* Project object */ = {
@@ -242,11 +326,19 @@
 			projectRoot = "";
 			targets = (
 				F50000000000000000000001 /* Inaction */,
+				F5000000000000000000A001 /* InactionWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F6000000000000000000A002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F60000000000000000000002 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -260,6 +352,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F6000000000000000000A001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1000000000000000000A001 /* InactionWidget.swift in Sources */,
+				F1000000000000000000A002 /* InactionWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F60000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -292,6 +393,7 @@
 				F1000000000000000000001A /* DateHelpers.swift in Sources */,
 				F1000000000000000000001B /* DurationLevel.swift in Sources */,
 				F10000000000000000000020 /* BadgeDetailView.swift in Sources */,
+				F1000000000000000000A004 /* WidgetDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,8 +453,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Inaction/Inaction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J5QZ9768WV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Inaction/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Inaction;
@@ -381,8 +485,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Inaction/Inaction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J5QZ9768WV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Inaction/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Inaction;
@@ -407,6 +513,60 @@
 			};
 			name = Release;
 		};
+		F9000000000000000000A001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = InactionWidget/InactionWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J5QZ9768WV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = InactionWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InactionWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.khakigai.Inaction.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		F9000000000000000000A002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = InactionWidget/InactionWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J5QZ9768WV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = InactionWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InactionWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.khakigai.Inaction.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -424,6 +584,15 @@
 			buildConfigurations = (
 				F90000000000000000000003 /* Debug */,
 				F90000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8000000000000000000A001 /* Build configuration list for PBXNativeTarget "InactionWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9000000000000000000A001 /* Debug */,
+				F9000000000000000000A002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

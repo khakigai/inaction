@@ -37,3 +37,28 @@ func computeMaxStreak(from dateKeys: [String]) -> Int {
     }
     return maxStreak
 }
+
+func computeCurrentStreak(from dateKeys: [String]) -> Int {
+    let calendar = Calendar.current
+    let today = calendar.startOfDay(for: Date())
+    let uniqueKeys = Set(dateKeys)
+    let todayKey = toDateKey(today)
+
+    var checkDate: Date
+    if uniqueKeys.contains(todayKey) {
+        checkDate = today
+    } else {
+        checkDate = calendar.date(byAdding: .day, value: -1, to: today)!
+    }
+
+    var streak = 0
+    while true {
+        if uniqueKeys.contains(toDateKey(checkDate)) {
+            streak += 1
+            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+        } else {
+            break
+        }
+    }
+    return streak
+}

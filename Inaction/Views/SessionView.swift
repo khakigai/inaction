@@ -75,6 +75,10 @@ struct SessionView: View {
         }
         try? modelContext.save()
 
+        let allDateKeys = allSessions.map(\.dateKey)
+        let streak = computeCurrentStreak(from: allDateKeys)
+        WidgetDataManager.update(hasSessionToday: true, currentStreak: streak)
+
         nav.lastCompletedDuration = duration
         nav.lastNewBadges = newBadges
         nav.currentScreen = .complete
