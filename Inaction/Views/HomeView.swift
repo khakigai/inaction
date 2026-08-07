@@ -85,6 +85,11 @@ struct HomeView: View {
             }
         }
         .onAppear {
+            if settings.reminderEnabled {
+                NotificationManager.shared.scheduleDailyReminder(
+                    hour: settings.reminderHour, minute: settings.reminderMinute
+                )
+            }
             guard !hasSessionToday else { return }
             withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
                 pulseAnimation = true

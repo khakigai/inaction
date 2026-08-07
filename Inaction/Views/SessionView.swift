@@ -79,6 +79,12 @@ struct SessionView: View {
         let streak = computeCurrentStreak(from: allDateKeys)
         WidgetDataManager.update(hasSessionToday: true, currentStreak: streak)
 
+        if settings.reminderEnabled {
+            NotificationManager.shared.skipToday(
+                hour: settings.reminderHour, minute: settings.reminderMinute
+            )
+        }
+
         nav.lastCompletedDuration = duration
         nav.lastNewBadges = newBadges
         nav.currentScreen = .complete
