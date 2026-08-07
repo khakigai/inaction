@@ -8,6 +8,7 @@ struct HomeView: View {
     @Query private var badgeRecords: [BadgeRecord]
 
     @State private var pulseAnimation = false
+    @State private var showHeatmapDetail = false
 
     private var sessionDict: [String: Int] {
         Dictionary(sessions.map { ($0.dateKey, $0.durationSeconds) }, uniquingKeysWith: { _, last in last })
@@ -59,8 +60,9 @@ struct HomeView: View {
                     .font(DT.playfair(48))
                     .foregroundStyle(DT.textPrimary)
 
-                HeatmapView(sessions: sessionDict)
+                HeatmapView(sessions: sessionDict, scrollable: false)
                     .padding(.horizontal, 24)
+                    .onTapGesture { showHeatmapDetail = true }
             }
 
             // Start button
@@ -83,6 +85,15 @@ struct HomeView: View {
                         radius: pulseAnimation ? 16 : 0)
                 .padding(.bottom, 100)
             }
+        }
+        .sheet(isPresented: $showHeatmapDetail) {
+            HeatmapDetailView(
+                sessions: sessionDict,
+                totalSessions: sessions.count,
+                totalMinutes: sessions.reduce(0) { $0 + $1.durationSeconds } / 60,
+                onDismiss: { showHeatmapDetail = false }
+            )
+            .presentationDetents([.large])
         }
         .onAppear {
             if settings.reminderEnabled {

@@ -42,6 +42,7 @@
 		F1000000000000000000001D /* PlayfairDisplay-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001E /* PlayfairDisplay-Black.ttf */; };
 		F1000000000000000000001E /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001F /* Inter.ttf */; };
 		F10000000000000000000020 /* BadgeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000020 /* BadgeDetailView.swift */; };
+		F10000000000000000000021 /* HeatmapDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000021 /* HeatmapDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +78,7 @@
 		F2000000000000000000001E /* PlayfairDisplay-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlayfairDisplay-Black.ttf"; sourceTree = "<group>"; };
 		F2000000000000000000001F /* Inter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttf; sourceTree = "<group>"; };
 		F20000000000000000000020 /* BadgeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeDetailView.swift; sourceTree = "<group>"; };
+		F20000000000000000000021 /* HeatmapDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapDetailView.swift; sourceTree = "<group>"; };
 		F20000000000000000000090 /* Inaction.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inaction.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2000000000000000000A001 /* InactionWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactionWidget.swift; sourceTree = "<group>"; };
 		F2000000000000000000A002 /* InactionWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactionWidgetBundle.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				F20000000000000000000011 /* BadgeNotificationView.swift */,
 				F20000000000000000000012 /* LegendView.swift */,
 				F20000000000000000000020 /* BadgeDetailView.swift */,
+				F20000000000000000000021 /* HeatmapDetailView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				F1000000000000000000001B /* DurationLevel.swift in Sources */,
 				F10000000000000000000020 /* BadgeDetailView.swift in Sources */,
 				F1000000000000000000A004 /* WidgetDataManager.swift in Sources */,
+				F10000000000000000000021 /* HeatmapDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
