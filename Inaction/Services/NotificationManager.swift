@@ -13,15 +13,15 @@ final class NotificationManager {
         }
     }
 
-    func scheduleDailyReminder() {
+    func scheduleDailyReminder(hour: Int, minute: Int) {
         let content = UNMutableNotificationContent()
         content.title = "Inaction"
         content.body = "You haven't planted grass today."
         content.sound = .default
 
         var dateComponents = DateComponents()
-        dateComponents.hour = 20
-        dateComponents.minute = 0
+        dateComponents.hour = hour
+        dateComponents.minute = minute
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 

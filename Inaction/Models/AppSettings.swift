@@ -21,6 +21,14 @@ final class AppSettings {
         didSet { defaults.set(reminderEnabled, forKey: "inaction.reminder") }
     }
 
+    var reminderHour: Int {
+        didSet { defaults.set(reminderHour, forKey: "inaction.reminderHour") }
+    }
+
+    var reminderMinute: Int {
+        didSet { defaults.set(reminderMinute, forKey: "inaction.reminderMinute") }
+    }
+
     var lastSeenBadgeCount: Int {
         didSet { defaults.set(lastSeenBadgeCount, forKey: "inaction.lastSeenBadgeCount") }
     }
@@ -30,6 +38,8 @@ final class AppSettings {
         soundEnabled = defaults.object(forKey: "inaction.sound") as? Bool ?? true
         hapticEnabled = defaults.object(forKey: "inaction.haptic") as? Bool ?? true
         reminderEnabled = defaults.object(forKey: "inaction.reminder") as? Bool ?? false
+        reminderHour = defaults.object(forKey: "inaction.reminderHour") as? Int ?? 20
+        reminderMinute = defaults.object(forKey: "inaction.reminderMinute") as? Int ?? 0
         lastSeenBadgeCount = defaults.integer(forKey: "inaction.lastSeenBadgeCount")
     }
 }

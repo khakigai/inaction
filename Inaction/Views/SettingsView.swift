@@ -11,6 +11,7 @@ struct SettingsView: View {
 
     @State private var showResetAlert = false
     @State private var showFileImporter = false
+    @State private var reminderTime = Date()
 
     var body: some View {
         ZStack {
@@ -38,6 +39,29 @@ struct SettingsView: View {
                             miniToggle(isOn: settings.reminderEnabled) {
                                 toggleReminder()
                             }
+                        }
+                        if settings.reminderEnabled {
+                            Divider().foregroundStyle(Color(hex: "F0ECE4"))
+                            HStack {
+                                Text("Time")
+                                    .font(DT.inter(14))
+                                    .foregroundStyle(DT.textPrimary)
+                                Spacer()
+                                DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                                    .scaleEffect(0.85)
+                                    .onChange(of: reminderTime) {
+                                        let cal = Calendar.current
+                                        settings.reminderHour = cal.component(.hour, from: reminderTime)
+                                        settings.reminderMinute = cal.component(.minute, from: reminderTime)
+                                        NotificationManager.shared.cancelReminder()
+                                        NotificationManager.shared.scheduleDailyReminder(
+                                            hour: settings.reminderHour, minute: settings.reminderMinute
+                                        )
+                                    }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
                         }
                     }
                     .background(DT.cardBackground)
@@ -71,6 +95,12 @@ struct SettingsView: View {
         }
         .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.json]) { result in
             if case .success(let url) = result { importData(from: url) }
+        }
+        .onAppear {
+            var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+            comps.hour = settings.reminderHour
+            comps.minute = settings.reminderMinute
+            reminderTime = Calendar.current.date(from: comps) ?? Date()
         }
     }
 
@@ -131,7 +161,9 @@ struct SettingsView: View {
                 await MainActor.run {
                     if granted {
                         settings.reminderEnabled = true
-                        NotificationManager.shared.scheduleDailyReminder()
+                        NotificationManager.shared.scheduleDailyReminder(
+                            hour: settings.reminderHour, minute: settings.reminderMinute
+                        )
                     }
                 }
             }
