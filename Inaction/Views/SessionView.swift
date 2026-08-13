@@ -11,19 +11,37 @@ struct SessionView: View {
 
     @State private var startTime: Date?
     @State private var remaining: Int = 0
+    @State private var breathPhase: Int = 0
+
+    private var breathLabel: String {
+        switch breathPhase {
+        case 0: return "Breathe in"
+        case 1: return "Hold"
+        case 2: return "Breathe out"
+        case 3: return "Hold"
+        default: return ""
+        }
+    }
 
     var body: some View {
         ZStack {
             DT.sessionBackground.ignoresSafeArea()
 
             VStack(spacing: 48) {
-                BreathingCircleView()
+                BreathingCircleView(phase: $breathPhase)
 
-                Text(timerString)
-                    .font(DT.inter(40, weight: .light))
-                    .monospacedDigit()
-                    .kerning(4)
-                    .foregroundStyle(Color(hex: "484f58"))
+                VStack(spacing: 12) {
+                    Text(timerString)
+                        .font(DT.inter(40, weight: .light))
+                        .monospacedDigit()
+                        .kerning(4)
+                        .foregroundStyle(Color(hex: "484f58"))
+
+                    Text(breathLabel)
+                        .font(DT.inter(14))
+                        .foregroundStyle(Color(hex: "8a929a"))
+                        .animation(.easeInOut(duration: 0.3), value: breathPhase)
+                }
 
                 Button { quitSession() } label: {
                     Text("Quit")
