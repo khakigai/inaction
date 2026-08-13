@@ -40,7 +40,7 @@ struct SetupView: View {
                                 .offset(x: settings.soundEnabled ? 9 : -9)
                                 .animation(.easeInOut(duration: 0.3), value: settings.soundEnabled)
                         }
-                        Text("Alpha waves")
+                        Text("Brown noise")
                             .font(DT.inter(13))
                             .foregroundStyle(settings.soundEnabled ? Color(hex: "4A4A4A") : DT.textSecondary)
                     }

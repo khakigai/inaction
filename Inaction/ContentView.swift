@@ -13,30 +13,37 @@ final class NavigationState {
 
 struct ContentView: View {
     @Environment(NavigationState.self) private var nav
+    @Environment(AuthManager.self) private var auth
 
     var body: some View {
         ZStack {
-            switch nav.currentScreen {
-            case .home:
-                HomeView()
+            if !auth.isSignedIn {
+                SignInView()
                     .transition(.opacity)
-            case .setup:
-                SetupView()
-                    .transition(.opacity)
-            case .session:
-                SessionView()
-                    .transition(.opacity)
-            case .complete:
-                CompleteView()
-                    .transition(.opacity)
-            case .settings:
-                SettingsView()
-                    .transition(.opacity)
-            case .badges:
-                BadgesView()
-                    .transition(.opacity)
+            } else {
+                switch nav.currentScreen {
+                case .home:
+                    HomeView()
+                        .transition(.opacity)
+                case .setup:
+                    SetupView()
+                        .transition(.opacity)
+                case .session:
+                    SessionView()
+                        .transition(.opacity)
+                case .complete:
+                    CompleteView()
+                        .transition(.opacity)
+                case .settings:
+                    SettingsView()
+                        .transition(.opacity)
+                case .badges:
+                    BadgesView()
+                        .transition(.opacity)
+                }
             }
         }
         .animation(.easeInOut(duration: 0.5), value: nav.currentScreen)
+        .animation(.easeInOut(duration: 0.5), value: auth.isSignedIn)
     }
 }

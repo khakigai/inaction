@@ -37,7 +37,7 @@ struct SessionView: View {
             remaining = settings.duration
             startTime = Date()
             UIApplication.shared.isIdleTimerDisabled = true
-            if settings.soundEnabled { audio.startBinauralBeats() }
+            if settings.soundEnabled { audio.startBrownNoise() }
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
@@ -58,7 +58,7 @@ struct SessionView: View {
 
     private func completeSession() {
         startTime = nil
-        audio.stopBinauralBeats()
+        audio.stopBrownNoise()
 
         let duration = settings.duration
         let session = Session(dateKey: toDateKey(Date()), durationSeconds: duration)
@@ -96,7 +96,7 @@ struct SessionView: View {
 
     private func quitSession() {
         startTime = nil
-        audio.stopBinauralBeats()
+        audio.stopBrownNoise()
         nav.currentScreen = .home
     }
 }

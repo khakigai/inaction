@@ -43,6 +43,9 @@
 		F1000000000000000000001E /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2000000000000000000001F /* Inter.ttf */; };
 		F10000000000000000000020 /* BadgeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000020 /* BadgeDetailView.swift */; };
 		F10000000000000000000021 /* HeatmapDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000021 /* HeatmapDetailView.swift */; };
+		F10000000000000000000022 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000022 /* KeychainHelper.swift */; };
+		F10000000000000000000023 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000023 /* AuthManager.swift */; };
+		F10000000000000000000024 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000024 /* SignInView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +82,9 @@
 		F2000000000000000000001F /* Inter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttf; sourceTree = "<group>"; };
 		F20000000000000000000020 /* BadgeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeDetailView.swift; sourceTree = "<group>"; };
 		F20000000000000000000021 /* HeatmapDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapDetailView.swift; sourceTree = "<group>"; };
+		F20000000000000000000022 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		F20000000000000000000023 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		F20000000000000000000024 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		F20000000000000000000090 /* Inaction.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inaction.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2000000000000000000A001 /* InactionWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactionWidget.swift; sourceTree = "<group>"; };
 		F2000000000000000000A002 /* InactionWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactionWidgetBundle.swift; sourceTree = "<group>"; };
@@ -177,6 +183,7 @@
 				F2000000000000000000000A /* CompleteView.swift */,
 				F2000000000000000000000B /* SettingsView.swift */,
 				F2000000000000000000000C /* BadgesView.swift */,
+				F20000000000000000000024 /* SignInView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -206,6 +213,8 @@
 				F20000000000000000000017 /* ShareCardRenderer.swift */,
 				F20000000000000000000018 /* DataExporter.swift */,
 				F2000000000000000000A006 /* WidgetDataManager.swift */,
+				F20000000000000000000022 /* KeychainHelper.swift */,
+				F20000000000000000000023 /* AuthManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -398,6 +407,9 @@
 				F10000000000000000000020 /* BadgeDetailView.swift in Sources */,
 				F1000000000000000000A004 /* WidgetDataManager.swift in Sources */,
 				F10000000000000000000021 /* HeatmapDetailView.swift in Sources */,
+				F10000000000000000000022 /* KeychainHelper.swift in Sources */,
+				F10000000000000000000023 /* AuthManager.swift in Sources */,
+				F10000000000000000000024 /* SignInView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

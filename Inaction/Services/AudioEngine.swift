@@ -9,9 +9,10 @@ final class AudioEngine {
     private var gainTarget: Float = 0
     private var isRunning = false
 
-    private var phases: [Double] = [0, 0, 0, 0] // left, right, harmonic1, harmonic2
+    private var brownState: (Float, Float) = (0, 0)
+    private var lpState: (Float, Float) = (0, 0)
 
-    func startBinauralBeats() {
+    func startBrownNoise() {
         guard !isRunning else { return }
         let session = AVAudioSession.sharedInstance()
         try? session.setCategory(.playback, mode: .default)
@@ -21,24 +22,25 @@ final class AudioEngine {
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
         let sampleRate = format.sampleRate
 
-        let baseFreq = 180.0
-        let beatFreq = 10.0
-        let harmonicGain: Float = 0.02
-        let binauralGain: Float = 0.12
-
-        phases = [0, 0, 0, 0]
+        brownState = (0, 0)
+        lpState = (0, 0)
         masterGain = 0
         gainTarget = 1
+
+        // Low-pass filter coefficient (~200Hz cutoff for smoothed brown noise)
+        let cutoff: Float = 200.0
+        let rc: Float = 1.0 / (2.0 * .pi * cutoff)
+        let dt: Float = 1.0 / Float(sampleRate)
+        let alpha: Float = dt / (rc + dt)
+        let volume: Float = 0.6
 
         let sourceNode = AVAudioSourceNode(format: format) { [self] _, _, frameCount, bufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(bufferList)
             let leftBuf = ablPointer[0].mData!.assumingMemoryBound(to: Float.self)
             let rightBuf = ablPointer[1].mData!.assumingMemoryBound(to: Float.self)
 
-            let phaseInc0 = baseFreq / sampleRate
-            let phaseInc1 = (baseFreq + beatFreq) / sampleRate
-            let phaseInc2 = (baseFreq * 2) / sampleRate
-            let phaseInc3 = (baseFreq * 3) / sampleRate
+            let leaky: Float = 0.999
+            let step: Float = 0.08
 
             for i in 0..<Int(frameCount) {
                 let rampSpeed: Float = 1.0 / Float(sampleRate * 2)
@@ -48,19 +50,17 @@ final class AudioEngine {
                     self.masterGain = max(self.masterGain - rampSpeed * 4, self.gainTarget)
                 }
 
-                let left = Float(sin(self.phases[0] * .pi * 2)) * binauralGain
-                let right = Float(sin(self.phases[1] * .pi * 2)) * binauralGain
-                let h1 = Float(sin(self.phases[2] * .pi * 2)) * harmonicGain
-                let h2 = Float(sin(self.phases[3] * .pi * 2)) * harmonicGain
+                let whiteL = Float.random(in: -1...1)
+                let whiteR = Float.random(in: -1...1)
+                self.brownState.0 = self.brownState.0 * leaky + whiteL * step
+                self.brownState.1 = self.brownState.1 * leaky + whiteR * step
 
-                leftBuf[i] = (left + h1 + h2) * self.masterGain
-                rightBuf[i] = (right + h1 + h2) * self.masterGain
+                // Single-pole low-pass filter for smoothing
+                self.lpState.0 += alpha * (self.brownState.0 - self.lpState.0)
+                self.lpState.1 += alpha * (self.brownState.1 - self.lpState.1)
 
-                self.phases[0] += phaseInc0
-                self.phases[1] += phaseInc1
-                self.phases[2] += phaseInc2
-                self.phases[3] += phaseInc3
-                for j in 0..<4 { if self.phases[j] > 1 { self.phases[j] -= 1 } }
+                leftBuf[i] = self.lpState.0 * volume * self.masterGain
+                rightBuf[i] = self.lpState.1 * volume * self.masterGain
             }
             return noErr
         }
@@ -74,7 +74,7 @@ final class AudioEngine {
         self.isRunning = true
     }
 
-    func stopBinauralBeats() {
+    func stopBrownNoise() {
         gainTarget = 0
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
             self?.engine?.stop()

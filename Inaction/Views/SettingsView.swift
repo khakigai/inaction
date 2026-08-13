@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @Environment(NavigationState.self) private var nav
     @Environment(AppSettings.self) private var settings
+    @Environment(AuthManager.self) private var auth
     @Environment(\.modelContext) private var modelContext
     @Query private var sessions: [Session]
     @Query private var badgeRecords: [BadgeRecord]
@@ -77,6 +78,16 @@ struct SettingsView: View {
                         actionButton("Import") { showFileImporter = true }
                         Divider().foregroundStyle(Color(hex: "F0ECE4"))
                         actionButton("Reset all data", isDanger: true) { showResetAlert = true }
+                    }
+                    .background(DT.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.06), radius: 3, y: 1)
+                    .padding(.bottom, 28)
+
+                    // Account section
+                    sectionLabel("ACCOUNT")
+                    VStack(spacing: 0) {
+                        actionButton("Sign out", isDanger: true) { auth.signOut() }
                     }
                     .background(DT.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
